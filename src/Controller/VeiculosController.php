@@ -28,7 +28,7 @@ class VeiculosController
                 'cambio' => 'Automático',
                 'final_placa' => '0',
                 'descricao' => 'Veículo 0km, completo com todos opcionais de fábrica.',
-                'imagem' => 'assets/img/gatitoteste.jpeg'
+                'imagem' => 'gatitoteste.jpeg'
             ]
         ];
     }

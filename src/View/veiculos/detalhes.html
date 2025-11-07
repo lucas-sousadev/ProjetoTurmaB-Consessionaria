@@ -56,6 +56,9 @@
             <input type="text" id="final_placa" name="final_placa" value="{{ veiculo.final_placa }}" readonly>
         </div>
         <div>
+            <img src="/ProjetoTurmaB-Consessionaria/public/assets/img/{{veiculo.imagem}}" alt="Foto">
+        </div>
+        <div>
             <label for="descricao">Descrição:</label>
             <textarea id="descricao" name="descricao" readonly
                 style="width: 100%; height: 50px;">{{ veiculo.descricao }}</textarea>
