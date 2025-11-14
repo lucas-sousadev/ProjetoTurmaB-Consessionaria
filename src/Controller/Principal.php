@@ -18,7 +18,9 @@ class Principal
 
      public function inicio()
     {
-        echo $this->ambiente->render("inicio.html");
+        $listaVeiculos = $this->veiculosDados->veiculosSelectAll();
+        
+        echo $this->ambiente->render("inicio.html", ['veiculos' => $listaVeiculos]);
     }
 
      public function catalogo()

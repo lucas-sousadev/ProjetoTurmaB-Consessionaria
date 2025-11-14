@@ -3,8 +3,9 @@
     namespace Concessionaria\Projetob\Controller;
     use PDO;
     use Concessionaria\Projetob\Model\Usuario;
+    use Concessionaria\Projetob\Model\Database; 
 
-    class AuthController
+class AuthController
 {
 
     private \Twig\Environment $ambiente;
@@ -12,12 +13,12 @@
     private \PDO $conexao;
 
     public function __construct()
-    {
+    {        
+        $this->conexao = Database::getConexao();
         $this->carregador = new \Twig\Loader\FilesystemLoader("./src/View/auth");
- 
         $this->ambiente = new \Twig\Environment($this->carregador);
 
-     }  
+    }  
 
     public function showRegisterForm(){
        echo $this->ambiente->render("register.html");
@@ -28,31 +29,29 @@
         $email = $_POST['Email_Usuario'] ?? '';
         $senha = $_POST['Senha_Usuario'] ?? '';
 
-    if (empty($nome) || empty($email) || empty($senha)) {
-        echo "Preencha todos os campos.";
-        return;
+        if (empty($nome) || empty($email) || empty($senha)) {
+            echo "Preencha todos os campos.";
+            return;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo "E-mail inválido.";
+            return;
+        }
+
+        $user = new Usuario($this->conexao);
+
+        if ($user->existeEmail($email)) {
+            header("Location: /ProjetoTurmaB-Consessionaria/register");
+            return;
+        }
+
+        if ($user->criar($nome, $email, $senha)) {
+            header("Location: /ProjetoTurmaB-Consessionaria/");
+        } else {
+            echo "Erro ao cadastrar usuário.";
+        }
     }
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "E-mail inválido.";
-        return;
-    }
-
-    $conexao = new PDO("mysql:host=192.168.0.12;dbname=PRJ2DSB", "Aluno2DS", "SenhaBD2");
-
-    $user = new Usuario($conexao);
-
-    if ($user->existeEmail($email)) {
-        header("Location: /ProjetoTurmaB-Consessionaria/register");
-        return;
-    }
-
-    if ($user->criar($nome, $email, $senha)) {
-        header("Location: /ProjetoTurmaB-Consessionaria/");
-    } else {
-        echo "Erro ao cadastrar usuário.";
-    }
-}
 
     public function showLoginForm(){
        echo $this->ambiente->render("login.html");
