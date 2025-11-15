@@ -5,7 +5,7 @@
     use Concessionaria\Projetob\Model\Usuario;
     use Concessionaria\Projetob\Model\Database; 
 
-class AuthController
+    class AuthController
 {
 
     private \Twig\Environment $ambiente;
@@ -13,12 +13,11 @@ class AuthController
     private \PDO $conexao;
 
     public function __construct()
-    {        
-        $this->conexao = Database::getConexao();
+    {
         $this->carregador = new \Twig\Loader\FilesystemLoader("./src/View/auth");
         $this->ambiente = new \Twig\Environment($this->carregador);
-
-    }  
+        $this->conexao = Database::getConexao();
+    }
 
     public function showRegisterForm(){
        echo $this->ambiente->render("register.html");
@@ -56,7 +55,7 @@ class AuthController
     public function showLoginForm(){
        echo $this->ambiente->render("login.html");
     }
-
+    
     public function login(){
         $email = $_POST['Email_Usuario'] ?? '';
         $senha = trim($_POST['Senha_Usuario'] ?? '');
@@ -71,16 +70,9 @@ class AuthController
             return;
         }
 
-        try {
-            $this->conexao = new \PDO("mysql:host=192.168.0.12;dbname=PRJ2DSB", "Aluno2DS", "SenhaBD2");
-            $this->conexao->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        } catch (\PDOException $e) {
-            echo "Erro ao conectar ao banco de dados.";
-            return;
-        }
+        $this->conexao = Database::getConexao();
 
-
-        $stmt = $this->conexao->prepare("SELECT senha FROM USUARIOS WHERE email = :email");
+        $stmt = $this->conexao->prepare("SELECT id, senha FROM USUARIOS WHERE email = :email");
         $stmt->bindValue(":email", $email);
         $stmt->execute();
 
@@ -98,7 +90,7 @@ class AuthController
         }
     }
 
-    public function Logout(){
+    public function logout(){
         session_start();
         session_destroy();
         header("Location: http://localhost/ProjetoTurmaB-Consessionaria/login");

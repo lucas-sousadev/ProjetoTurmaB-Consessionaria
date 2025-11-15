@@ -2,6 +2,7 @@
 namespace Concessionaria\Projetob\Model;
 use Concessionaria\Projetob\Model\Database;
 use PDO;
+
 class Usuario
 {
     public int $id;
@@ -11,12 +12,12 @@ class Usuario
     public int $role;
     private \PDO $conexao;
 
-    public function __construct(PDO $conexao){
+    public function __construct(){
         $this->conexao = Database::getConexao();
     }
 
     public function existeEmail(string $email): bool
-    {   
+    {
         $stmt = $this->conexao->prepare("SELECT id FROM USUARIOS WHERE email = :email");
         $stmt->bindValue(":email", $email);
         $stmt->execute();

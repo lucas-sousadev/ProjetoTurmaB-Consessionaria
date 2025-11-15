@@ -7,7 +7,7 @@ use PDOException;
 class Database
 {
     private static ?PDO $conexao = null;
-    private static string $charset = "utf8mb4";
+      private static string $charset = "utf8mb4";
 
     /* Se for usar o banco de dados da escola, descomente essas variáveis e comente as configurações de ambiente local abaixo
     private static string $host = "192.168.0.12";
