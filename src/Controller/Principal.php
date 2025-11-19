@@ -1,46 +1,48 @@
 <?php
-    namespace Concessionaria\Projetob\Controller;
-    use Concessionaria\Projetob\Model\Veiculos;
-    use Concessionaria\Projetob\Model\Database;
+namespace Concessionaria\Projetob\Controller;
+use Concessionaria\Projetob\Model\VeiculosRepository;
+use Concessionaria\Projetob\Model\Database;
+use Concessionaria\Projetob\Model\UserRepository;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class Principal
 {
-    private \Twig\Environment $ambiente;
-    private \Twig\Loader\FilesystemLoader $carregador;
-    private Veiculos $veiculosDados;
+    private Environment $ambiente;
+    private FilesystemLoader $carregador;
+    private VeiculosRepository $veiculosRepository;
 
-     public function __construct()
-     {
-        $this->carregador = new \Twig\Loader\FilesystemLoader("./src/View");
-        $this->ambiente = new \Twig\Environment($this->carregador);
-        
-        $this->veiculosDados = new Veiculos();
-     }  
-
-     public function inicio()
+    public function __construct()
     {
-        session_start();
-        $usuario = null;
+        $this->carregador = new FilesystemLoader($_ENV['TWIG_VIEW_PATH']);
+        $this->ambiente = new Environment($this->carregador);
 
-        if (isset($_SESSION["user_id"])) {
-            $usuario = Database::loadUserById($_SESSION["user_id"]);
-        }
-        $listaVeiculos = $this->veiculosDados->veiculosSelectAll();
-        
-        echo $this->ambiente->render("inicio.html", ['usuario' => $usuario, 'veiculos' => $listaVeiculos]);
+        $this->veiculosRepository = new VeiculosRepository(Database::getConexao());
     }
 
-     public function catalogo()
+    public function inicio()
     {
         session_start();
         $usuario = null;
 
         if (isset($_SESSION["user_id"])) {
-            $usuario = Database::loadUserById($_SESSION["user_id"]);
+            $userRepository = new UserRepository(Database::getConexao());
+            $usuario = $userRepository->loadUserById($_SESSION["user_id"]);
         }
-        $listaVeiculos = $this->veiculosDados->veiculosSelectAll();
+        $pagina = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        if ($pagina < 1)
+            $pagina = 1;
 
-        echo $this->ambiente->render("veiculos/catalogo.html", ['usuario' => $usuario, 'veiculos' => $listaVeiculos]);
+        $limite = 20;
+        $veiculos = $this->veiculosRepository->paginarVeiculo($pagina, $limite);
+
+        echo $this->ambiente->render("inicio.html", ['usuario' => $usuario, 'veiculos' => $veiculos, 'pagina' => $pagina]);
+    }
+
+    public function catalogo()
+    {
+        $listaVeiculos = $this->veiculosRepository->veiculosSelectAll();
+        echo $this->ambiente->render("veiculos/catalogo.html", ['veiculos' => $listaVeiculos]);
     }
 }
 ?>
