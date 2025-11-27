@@ -64,6 +64,41 @@ body {
 }
 
 /*CSS DO REGISTER.HTML*/
+#Enviar_loginhtml:hover {
+	 opacity: 0.95; 
+	}
+
+		
+		.flash {
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			padding: 16px 24px;
+			border-radius: 8px;
+			animation: slideIn 0.3s ease-in-out;
+		}
+
+		@keyframes slideIn {
+			from {
+				transform: translateX(400px);
+				opacity: 0;
+			}
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+
+		.flash-success { 
+			background: #28a745; 
+			color: #fff; 
+		}
+
+		.flash-error { 
+			background: #dc3545; 
+			color: #fff; 
+		}
+		
 
 #div_loginhtml {
 	display: flex;
